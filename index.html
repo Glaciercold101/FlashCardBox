@@ -72,13 +72,19 @@
     transition: background-color 0.2s, box-shadow 0.2s;
   }
   .widget.drag-over { box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.3) inset; }
-  .header { position: relative; height: 48px; flex-shrink: 0; cursor: grab; }
+  .header { position: relative; height: auto; min-height: 48px; flex-shrink: 0; cursor: grab; }
+  .controls { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 6px 10px; background: rgba(10,6,2,0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); opacity: 0; transform: translateY(-6px); transition: all 0.18s ease; pointer-events: none; border-radius: 14px 14px 0 0; overflow-x: hidden; overflow-y: hidden; }
+  .controls-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .controls-row::-webkit-scrollbar { display: none; }
+  .controls-row.top-row { padding-bottom: 1px; }
+  .controls-row.bottom-row { padding-top: 1px; }
+
   .header:active { cursor: grabbing; }
   .date-time { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; transition: opacity 0.2s ease; pointer-events: none; }
   #date-left { font-size: 14px; font-weight: 500; letter-spacing: 0.6px; opacity: 0.92; text-transform: uppercase; }
   #date-left span.weekday { text-transform: none; font-weight: 400; opacity: 0.85; margin-left: 4px; }
   #time-right { font-size: 28px; font-weight: 300; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
-  .controls { position: absolute; inset: 0; display: flex; align-items: center; gap: 6px; padding: 0 10px; background: rgba(10,6,2,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transform: translateY(-6px); transition: all 0.18s ease; pointer-events: none; border-radius: 14px 14px 0 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+
   .controls::-webkit-scrollbar { display: none; }
   .widget:hover .controls, .widget:focus-within .controls { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .widget:hover .date-time { opacity: 0; }
@@ -142,6 +148,90 @@
     .date-time { opacity: 0; }
     .card { max-height: 180px; }
   }
+
+
+  /* --- Two-row toolbar with grouping + 4-arrow info --- */
+  @media (min-width: 769px) {
+    .header { height: 78px !important; }
+    .controls { height: 78px !important; }
+    .date-time { height: 78px; }
+    .widget:hover .controls { opacity: 1; }
+  }
+  .controls-row.top-row {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 5px;
+    margin-bottom: 1px;
+  }
+  .controls-row.bottom-row {
+    padding-top: 2px;
+  }
+  .controls-row.top-row button,
+  .controls-row.top-row select { background: rgba(255,255,255,0.07); }
+  .controls-row.bottom-row button { background: rgba(255,255,255,0.11); }
+  
+  /* Four-arrow info button top-right */
+  /* removed */ .x-shortcutsInfoBtn {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    border-radius: 7px;
+    font-size: 13px;
+    margin-left: auto;
+    cursor: help;
+    flex-shrink: 0;
+  }
+  /* removed */ .x-shortcutsInfoBtn:hover {
+    background: rgba(255,255,255,0.14) !important;
+  }
+  /* Tooltip that appears only on hover over 4-arrow button */
+  /* removed */ .x-shortcuts-tooltip {
+    position: absolute;
+    top: 82px;
+    right: 10px;
+    left: auto;
+    width: 320px;
+    max-width: calc(100% - 20px);
+    background: rgba(10,10,10,0.92);
+    border: 1px solid rgba(255,255,255,0.14);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.5;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: all 0.18s ease;
+    z-index: 20;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    white-space: normal;
+  }
+  .x-shortcuts-tooltip b { color: #ff9a2e; font-weight: 700; }
+  .x-shortcuts-tooltip .row { display: flex; justify-content: space-between; padding: 2px 0; }
+  .x-shortcuts-tooltip .k { opacity: 0.6; }
+  /* removed */ .x-shortcutsInfoBtn:hover + .shortcuts-tooltip,
+  .shortcuts-tooltip:hover {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .tooltip { display: none !important; }
+  /* Keep bottom hint subtle */
+  .card-wrap .shortcuts-footer {
+    position: absolute;
+    bottom: 58px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    color: rgba(255,255,255,0.35);
+    white-space: nowrap;
+  }
+  .card-wrap:hover .shortcuts-footer { opacity: 1; }
+
 
   /* --- PWA / Mobile polish --- */
   html {
@@ -261,7 +351,7 @@
   .widget::after{
     content:""; position:absolute; right:-20px; bottom:-18px; width:140px; height:140px;
     background: url('./icons/logo.png') center/contain no-repeat;
-    opacity:0.06; pointer-events:none; z-index:0; filter: blur(0.2px);
+    opacity:0.09; pointer-events:none; z-index:0; filter: blur(0.15px);
   }
   .card-wrap, .header{ position:relative; z-index:1; }
   @media (max-width:768px),(pointer:coarse){
@@ -377,42 +467,47 @@
         <div id="time-right">07:28</div>
       </div>
       <div class="controls" id="controls">
-        <span id="deckLabel" style="max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; opacity:.9; font-size:11px; margin-right:4px; font-weight:600;">No deck</span>
-        <button id="installBtn" title="Install app">⬇ Install</button>
-        <button id="newDeckBtn" title="New deck">🗂️</button>
-        <button id="importBtn" title="Import text/JSON or image pairs">Import</button>
-        <select id="delimiter" title="Delimiter">
-          <option value="auto">Auto</option>
-          <option value=",">,</option>
-          <option value="&#9;">Tab</option>
-          <option value=";">;</option>
-          <option value="|">|</option>
-          <option value="custom">…</option>
-        </select>
-        <input id="customDelim" type="text" maxlength="1" placeholder="," title="Custom delimiter" style="display:none">
-        <div class="opacity-wrap" title="Window opacity">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.55">
+        <div class="controls-row top-row">
+          <span id="deckLabel" style="max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; opacity:.9; font-size:11px; margin-right:4px; font-weight:600;">No deck</span>
+          <button id="installBtn" title="Install app">⬇ Install</button>
+          <button id="newDeckBtn" title="New deck - create new collection">📚</button>
+          <button id="importBtn" title="Import text/JSON or image pairs">Import</button>
+          <select id="delimiter" title="Delimiter">
+            <option value="auto">Auto</option>
+            <option value=",">,</option>
+            <option value="&#9;">Tab</option>
+            <option value=";">;</option>
+            <option value="|">|</option>
+            <option value="custom">…</option>
+          </select>
+          <input id="customDelim" type="text" maxlength="1" placeholder="," title="Custom delimiter" style="display:none">
+          <div class="opacity-wrap" title="Window opacity">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <input type="range" id="opacity" min="0.2" max="1" step="0.05" value="0.55">
+          </div>
+          <select id="themeSelect" title="Color theme">
+            <option value="default">🟠 Theme</option>
+            <option value="blue">🔵 Blue</option>
+            <option value="pink">🩷 Pink</option>
+            <option value="yellow">🟡 Yellow</option>
+          </select>
+          <button id="blueGalleryBtn" title="Blue Gallery View - Beautiful blue theme" style="background:linear-gradient(135deg,#0A2D69,#1E5AB4); border-color:#D4AF37; color:#FFD700; font-weight:700;">🔵 Gallery</button>
+          </div>
+        <div class="controls-row bottom-row">
+          <button id="addBtn" title="Add card (N)">+</button>
+          <button id="editBtn" title="Edit (E)">✎</button>
+          <button id="deleteSlideBtn" title="Delete card (Ctrl+Del)">🗑️</button>
+          <button id="saveBtn" title="Save deck">💾</button>
+          <button id="saveAsBtn" title="Save As JSON or CSV">💾⬇️</button>
+          <button id="openDiskBtn" title="Open from disk">📂</button>
+          <select id="deckSelect" title="Decks"><option value="">Decks...</option></select>
+          <button id="deleteBtn" title="Delete deck">✕</button>
+          <button id="refreshBtn" title="Refresh all">↻</button>
+          <button id="soundBtn" title="Toggle swipe sound">🔊</button>
+          <button id="shuffleBtn" title="Shuffle deck">🔀</button>
+          <button id="hiddenBtn" title="Hidden cards (H)">🙈 <span id="hiddenCount" style="font-size:10px;opacity:0.8;margin-left:2px">0</span></button>
+          <button id="unhideAllBtn" title="Unhide all (Shift+H)">👁️</button>
         </div>
-        <select id="themeSelect" title="Color theme">
-          <option value="default">🟠 Theme</option>
-          <option value="blue">🔵 Blue</option>
-          <option value="pink">🩷 Pink</option>
-          <option value="yellow">🟡 Yellow</option>
-        </select>
-        <button id="addBtn" title="Add card (N)">+</button>
-        <button id="editBtn" title="Edit (E)">✎</button>
-        <button id="deleteSlideBtn" title="Delete card (Ctrl+Del)">🗑️</button>
-        <button id="saveBtn" title="Save deck">💾</button>
-        <button id="saveAsBtn" title="Save As JSON or CSV">💾⬇️</button>
-        <button id="openDiskBtn" title="Open from disk">📂</button>
-        <select id="deckSelect" title="Decks"><option value="">Decks...</option></select>
-        <button id="deleteBtn" title="Delete deck">✕</button>
-        <button id="refreshBtn" title="Refresh all">↻</button>
-        <button id="soundBtn" title="Toggle swipe sound">🔊</button>
-        <button id="shuffleBtn" title="Shuffle deck">🔀</button>
-        <button id="hiddenBtn" title="Hidden cards (H)">🙈 <span id="hiddenCount" style="font-size:10px;opacity:0.8;margin-left:2px">0</span></button>
-        <button id="unhideAllBtn" title="Unhide all (Shift+H)">👁️</button>
         <div class="tooltip">← → navigate • ↑ ↓ or Space flip • N new • E edit • Z zoom • dbl-click zoom • Import images = pairs</div>
       </div>
     </div>
@@ -426,6 +521,7 @@
       </div>
       <div class="hint">click to flip</div>
       <div id="dots" class="dots"></div>
+      <div class="shortcuts-footer">Z zoom • Space flip • ← → navigate</div>
       <button id="prevBtn" class="nav-arrow prev" aria-label="Previous" title="Previous">‹</button>
       <button id="nextBtn" class="nav-arrow next" aria-label="Next" title="Next">›</button>
       <button id="hideCardBtn" class="hide-btn" title="Hide card (H)">🙈</button>
@@ -1692,6 +1788,21 @@
       if (newCards.length) { cards = newCards; index = 0; originalCards = null; showCard(); saveState(); await autoSave(); showToast(`Dropped ${newCards.length} image pair${newCards.length>1?'s':''}`); }
     } else { files.forEach(f => handleImageFile(f, null)); }
   });
+
+  
+  // Blue Gallery View switch
+  const blueGalleryBtn = document.getElementById('blueGalleryBtn');
+  if (blueGalleryBtn) {
+    blueGalleryBtn.addEventListener('click', () => {
+      // If blue-platform.html exists, open it
+      // Also try to pass current deck as query param for auto-load
+      try {
+        const currentDeckData = { name: deckSelect.value ? decks.find(d=>String(d.id)===deckSelect.value)?.name || 'Deck' : 'Current Deck', cards: cards };
+        localStorage.setItem('squidley_blue_temp', JSON.stringify(currentDeckData));
+      } catch(e){}
+      window.open('./blue-platform.html', '_blank');
+    });
+  }
 
   // --- Init ---
   (async () => {
